@@ -1,0 +1,33 @@
+{
+  "name": "cs110_diceshare",
+  "version": "1.0.0",
+  "description": "This is a project for the summer A 2026 course for UCR's CS110. This is a concept of a dice sharing website.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darklsor56/CS110_DiceShare.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/darklsor56/CS110_DiceShare/issues"
+  },
+  "homepage": "https://github.com/darklsor56/CS110_DiceShare#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongoose": "^9.7.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
