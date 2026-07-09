@@ -1,0 +1,19 @@
+<%- include("partials/header") %>
+
+<section class="hero">
+  <h2>Trade dice with local TTRPG players</h2>
+  <p>Find, post, and trade dice sets with players and collectors in your community.</p>
+
+  <form action="/listings" method="GET">
+    <input type="text" name="q" placeholder="Search for metal, blue, D20, dragon...">
+    <button type="submit">Search</button>
+  </form>
+</section>
+
+<section>
+    <!--TURDS-->
+  <h2>Recent Listings</h2>
+  <p>Listing cards will go here.</p>
+</section>
+
+<%- include("partials/footer") %>
