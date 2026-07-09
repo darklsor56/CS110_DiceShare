@@ -1,5 +1,5 @@
-import express from "express";
-import path from "path";
+const express = require("express");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -22,4 +22,4 @@ app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "L
 app.get("/profile", (req, res) => {res.render("profile", { title: "Profile" })});
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
 app.get("/register", (req, res) => {res.render("register", { title: "Register" })});
-app.listen(PORT, () => {console.log(`DiceShare running on https://localhost:${PORT}`)})
+app.listen(PORT, () => {console.log(`DiceShare running on http://localhost:${PORT}`)})
