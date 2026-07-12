@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema(
             maxlength: 500
         },
 
+        // give max length?
         location: {
             type: String,
             default: ""
