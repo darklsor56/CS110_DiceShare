@@ -41,12 +41,42 @@ app.post("/login", async(req, res) => {
   try {
     const { email, password } = req.body;
 
+    // find the user
     const user = await User.findOne({ email });
 
     if(!user) {
       return res.status(400).send("Invalid email or password.");
     }
+
+    // check if the passwords HASHES match
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+
+    if(!passwordMatches) {
+      return res.status(400).send("Invalid email or password.");
+    }
+
+    req.session.user = {
+      id: user._id,
+      username: user.username,
+      email: user.email
+    }
+
+    return res.redirect("/profile");
+  } catch(error) {
+    console.error(error);
+    return res.status(500).send("Log in failed.");
   }
+});
+
+app.post("/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send("Logout failed.");
+    }
+
+    res.redirect("/");
+  });
 });
 
 app.get("/register", (req, res) => {res.render("register", { title: "Register" })});
