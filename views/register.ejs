@@ -4,4 +4,18 @@
   <h2>Create an Account</h2>
   <p>Join DiceShare to trade dice with local TTRPG players.</p>
 
+  <form class="auth-form" action="/register" method="POST">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input 
+        type="text" 
+        id="username" 
+        name="username" 
+        placeholder="DiceGoblin42" 
+        minlength="3"
+        maxlength="30"
+        required
+      >
+    </div>
+
 <%- include("partials/footer") %>
