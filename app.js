@@ -35,7 +35,19 @@ app.get("/listings", (req, res) => {res.render("listings", { title: "Browse List
 app.get("/listings/new", (req, res) => {res.render("create-listing", { title: "Create Listing" })});
 app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
 app.get("/profile", (req, res) => {res.render("profile", { title: "Profile" })});
+
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
+app.post("/login", async(req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if(!user) {
+      return res.status(400).send("Invalid email or password.");
+    }
+  }
+});
 
 app.get("/register", (req, res) => {res.render("register", { title: "Register" })});
 app.post("/register", async(req, res) => {
