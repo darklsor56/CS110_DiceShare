@@ -26,7 +26,7 @@ app.get("/listings/new", (req, res) => {res.render("create-listing", { title: "C
 app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
 app.get("/profile", (req, res) => {res.render("profile", { title: "Profile" })});
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
-app.get("/register", (req, res) => {
+app.get("/register", async(req, res) => {
   try {
     const { username, email, location, bio, password, confirmPassword } = req.body;
 
