@@ -25,6 +25,9 @@ app.use(
     saveUninitialized: false
   })
 );
+app.use((req, res, next) => {
+  res.locals.currentUser = req.session.user || null;
+});
 
 // Temporary routes
 app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
