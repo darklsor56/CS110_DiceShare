@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 const DiceListing = require("./models/DiceListings")
+const bcrypt = require("bcrypt")
+const User = require("./models/User");
 
 const app = express();
 
