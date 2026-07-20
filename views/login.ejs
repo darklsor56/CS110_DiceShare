@@ -1,4 +1,19 @@
 <%- include("partials/header") %>
+<section class="auth-container">
+    <h2>Log In</h2>
+    <p>Welcome back to DiceShare. Log in to create listings, request trades, and review other users.</p>
+
+    <form class="auth-form" action="/login" method="POST">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="you@example.com" 
+                required
+                >
+        </div>
 
         <div>
             <label for="password">Password</label>
