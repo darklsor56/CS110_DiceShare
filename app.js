@@ -60,6 +60,7 @@ app.get("/profile", requiredLogin, (req, res) => {
     res.status(500).send("Could not load profile.")
   }
 });
+
 app.get("/profile/edit", requiredLogin, async(req, res) => {
   try{
     // get the user. if no user, bring them to log in
@@ -76,6 +77,22 @@ app.get("/profile/edit", requiredLogin, async(req, res) => {
   } catch(error) {
     console.error(error);
     res.status(500).send("Could not load edit profile page.");
+  }
+});
+app.post("/profile/edit", requiredLogin, async(req, res) => {
+  try {
+    const { bio, location, profileImageUrl } = req.body;
+
+    await User.findByIdAndUpdate(req.session.user.id, {
+      bio,
+      location,
+      profileImageUrl
+    });
+
+    res.redirect("/profile")
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not update profile.");
   }
 });
 
