@@ -60,6 +60,24 @@ app.get("/profile", requiredLogin, (req, res) => {
     res.status(500).send("Could not load profile.")
   }
 });
+app.get("/profile/edit", requiredLogin, async(req, res) => {
+  try{
+    // get the user. if no user, bring them to log in
+    const user = await User.findById(req.session.user.id);
+
+    if(!user) {
+      return res.redirect("/login");
+    }
+
+    res.render("edit-profile", {
+      title: "Edit Profile",
+      user
+    });
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not load edit profile page.");
+  }
+});
 
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
 app.post("/login", async(req, res) => {
