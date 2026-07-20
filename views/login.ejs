@@ -1,14 +1,23 @@
 <%- include("partials/header") %>
 
-<div>
-    <label for="password">Password</label>
-    <input
-        type="password"
-        id="password"
-        name="password"
-        placeholder="Enter password here..."
-        required
-        >
-</div>
+        <div>
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password here..."
+                required
+                >
+        </div>
+
+        <button type="submit">Log In</button>
+    </form>
+
+    <p>
+        Don't have an account?
+        <a href="/register">Sign up here!</a>
+    </p>
+</section>
 
 <%- include("partials/footer") %>
