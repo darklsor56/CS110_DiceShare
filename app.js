@@ -1,12 +1,8 @@
 const express = require("express");
 const path = require("path");
-const connectDB = require("./config/db");
 const DiceListing = require("./models/DiceListings")
-require("dotenv").config();
-connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // View Engine
 app.set("view engine", "ejs");
@@ -37,4 +33,4 @@ app.get("/db-test", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {console.log(`DiceShare running on http://localhost:${PORT}`)})
+module.exports = app;
