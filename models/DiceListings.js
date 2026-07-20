@@ -19,7 +19,7 @@ const diceListingSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
-            mexlength: 1000
+            maxlength: 1000
         },
 
         diceType: {
