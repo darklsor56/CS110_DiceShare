@@ -56,6 +56,9 @@ app.post("/register", async(req, res) => {
       bio,
       passwordHash
     });
+
+    // Send them to the login page!
+    return res.redirect("/login");
   } catch(error) {
     console.error(error);
     res.status(500).send("Registration failed.")

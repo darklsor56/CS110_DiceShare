@@ -22,9 +22,4 @@ describe("Page routes", () => {
     const res = await request(app).get("/register");
     expect(res.statusCode).toBe(200);
   });
-
-  app.get("/users-test", async (req, res) => {
-  const users = await User.find({}, "username email location");
-  res.json(users);
-  });
 });
