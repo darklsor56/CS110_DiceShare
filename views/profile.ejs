@@ -3,7 +3,19 @@
 <section class="profile-container">
     <h2><%= currentUser.username %>'s Profile</h2>
 
-    <p><strong>Email:</strong> <%= currentUser.email %></p>
+    <% if (user.profileImageUrl) { %>
+        <img class="profile-avatar" src="<%= user.profileImageUrl %>" alt="<%= user.username %>'s profile image">
+    <% } else { %>
+        <div class="profile-avatar-placeholder">No Image</div>
+    <% } %>
+
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Location:</strong> <%= user.location || "No location added yet." %></p>
+    <p><strong>Bio:</strong> <%= user.bio || "No bio added yet." %></p>
+    <p><strong>Average Rating:</strong> <%= user.averageRating %> / 5</p>
+    <p><strong>Completed Trades:</strong> <%= user.completedTradeCount %></p>
+
+    <a class="button-link" href="/profile/edit">Edit Profile</a>
 </section>
 
 <%- include("partials/footer") %>
