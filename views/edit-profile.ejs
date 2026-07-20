@@ -2,30 +2,47 @@
 
 <section>
     <h2>Edit Profile</h2>
+
+    <form class="auth-form" action="/profile/edit" method="POST">
+        <div class="form-group">
+            <label for="location">General Location</label>
+            <input
+                type="text"
+                id="location"
+                name="location"
+                value="<%= user.location || '' %>"
+                placeholder="Columbus, OH"
+                >
+        </div>
+
+        <div class="form-group">
+            <label for="profileImageUrl">Profile Image URL</label>
+            <input
+                type="url"
+                id="profileImageUrl"
+                name="profileImageUrl"
+                value="<%= user.profileImageUrl || '' %>"
+                placeholder="https://example.com/image.jpg"
+                >
+        </div>
+
+        <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea
+                id="bio"
+                name="bio"
+                rows="5"
+                maxlength="500"
+                placeholder="Tell other people about yourself."
+                ><%= user.bio || '' %></textarea>
+        </div>
+
+        <button type="submit">Save Profile</button>
+    </form>
+
+    <p>
+        <a href="/profile">Cancel</a>
+    </p>
 </section>
-
-<form class="auth-form" action="/profile/edit" method="POST">
-    <div class="form-group">
-        <label for="location">General Location</label>
-        <input
-            type="text"
-            id="location"
-            name="location"
-            value="<%= user.location || '' %>"
-            placeholder="Columbus, OH"
-            >
-    </div>
-
-    <div class="form-group">
-        <label for="profileImageUrl">Profile Image URL</label>
-        <input
-            type="url"
-            id="profileImageUrl"
-            name="profileImageUrl"
-            value="<%= user.profileImageUrl || '' %>"
-            placeholder="https://example.com/image.jpg"
-            >
-    </div>
-</form>
 
 <%- include("partials/footer") &>
