@@ -1,6 +1,9 @@
 const express = require("express");
 const path = require("path");
+const connectDB = require("./config/db");
+const DiceListing = require("./models/DiceListings")
 require("dotenv").config();
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,4 +25,16 @@ app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "L
 app.get("/profile", (req, res) => {res.render("profile", { title: "Profile" })});
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
 app.get("/register", (req, res) => {res.render("register", { title: "Register" })});
+
+// Very temp route
+app.get("/db-test", async (req, res) => {
+  try {
+    const count = await DiceListing.countDocuments();
+    res.send(`Database works. Dice listings count: ${count}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Database test failed");
+  }
+});
+
 app.listen(PORT, () => {console.log(`DiceShare running on http://localhost:${PORT}`)})
