@@ -3,11 +3,7 @@ const path = require("path");
 const DiceListing = require("./models/DiceListings")
 const bcrypt = require("bcrypt")
 const User = require("./models/User");
-const connectDB = require("./config/db")
-const session = require("express-session")
-
-require("dotenv").config();
-connectDB();
+const session = require("express-session");
 
 const app = express();
 
@@ -21,12 +17,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
-    secret: false,
+    secret: process.env.SESSION_SECRET || "dev-secret-change-later",
+    resave: false,
     saveUninitialized: false
   })
 );
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
+  next();
 });
 
 // helpers
