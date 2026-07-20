@@ -26,7 +26,39 @@ app.get("/listings/new", (req, res) => {res.render("create-listing", { title: "C
 app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
 app.get("/profile", (req, res) => {res.render("profile", { title: "Profile" })});
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
-app.get("/register", (req, res) => {res.render("register", { title: "Register" })});
+app.get("/register", (req, res) => {
+  try {
+    const { username, email, location, bio, password, confirmPassword } = req.body;
+
+    // Do basic error checking/cleaning
+    if(password !== confirmPassword) {
+      return res.status(400).send("Passwords do not match.");
+    }
+
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
+    });
+
+    if(existingUser) {
+      return res.status(400).send("A user with email or username already exists.");
+    }
+
+    // Make the hash and do NOT store the actual password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Make the actual User object
+    await User.create({
+      username,
+      email,
+      location,
+      bio,
+      passwordHash
+    });
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Registration failed.")
+  }
+});
 
 // Very temp route
 app.get("/db-test", async (req, res) => {
