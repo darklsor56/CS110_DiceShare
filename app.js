@@ -3,6 +3,7 @@ const path = require("path");
 const DiceListing = require("./models/DiceListings")
 const bcrypt = require("bcrypt")
 const User = require("./models/User");
+const connectDB = require("./config/db")
 
 const app = express();
 
