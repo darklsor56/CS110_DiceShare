@@ -29,12 +29,21 @@ app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
 });
 
+// helpers
+function requiredLogin(req, res, next) {
+  if(!req.session.user) {
+    return res.redirect("/login");
+  }
+
+  next();
+}
+
 // Temporary routes
 app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
 app.get("/listings", (req, res) => {res.render("listings", { title: "Browse Listings" })});
 app.get("/listings/new", (req, res) => {res.render("create-listing", { title: "Create Listing" })});
 app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
-app.get("/profile", (req, res) => {res.render("profile", { title: "Profile" })});
+app.get("/profile", requiredLogin, (req, res) => {res.render("profile", { title: "Profile" })});
 
 app.get("/login", (req, res) => {res.render("login", { title: "Log In" })});
 app.post("/login", async(req, res) => {
