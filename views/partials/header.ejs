@@ -15,9 +15,15 @@
             <a href="/">Home</a>
             <a href="/listings">Listings</a>
             <a href="/listings/new">Create Listings</a>
-            <a href="/profile">Profile</a>
+            <% if(currentUser) { %>
+            <a href="/profile"><%= currentUser.username %></a>
+            <form action="/logout" method="POST" class="logout-form">
+                <button type="submit">Log Out</button>
+            </form>
+            <% } else { %>
             <a href="/login">Log In</a>
             <a href="/register">Sign Up</a>
+            <% } %>
         </nav>
     </header>
 
