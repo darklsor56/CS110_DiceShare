@@ -4,6 +4,7 @@ const DiceListing = require("./models/DiceListings")
 const bcrypt = require("bcrypt")
 const User = require("./models/User");
 const connectDB = require("./config/db")
+const session = require("express-session")
 
 require("dotenv").config();
 connectDB();
