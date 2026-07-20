@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt")
 const User = require("./models/User");
 const connectDB = require("./config/db")
 
+require("dotenv").config();
+connectDB();
+
 const app = express();
 
 // View Engine
