@@ -56,3 +56,46 @@ footer {
     padding: 1rem;
     color: #555;
 }
+
+.auth-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.auth-container h2 {
+  margin-bottom: 0.5rem;
+}
+
+.auth-container p {
+  color: #555;
+}
+
+.auth-form {
+  margin-top: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.35rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  display: block;
+}
+
+.auth-form button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.auth-switch {
+  margin-top: 1rem;
+  text-align: center;
+}
