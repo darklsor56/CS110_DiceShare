@@ -1,6 +1,22 @@
 <%- include("partials/header") %>
 
-<h2>Page Name Here</h2>
-<p>This page will be built soon.</p>
+<section class="listing-form-container">
+    <h2>Create a Dice Listing</h2>
+    <p>Post a dice set you want to trade with local dice collectors.</p>
+
+    <form class="listing-form" action="/listings" method="POST">
+        <div class="form=group">
+            <label for="title">Listing Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Blue metal 7-piece dice set"
+                maxlength="100"
+                required
+                >
+        </div>
+    </form>
+</section>
 
 <%- include("partials/footer") %>
