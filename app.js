@@ -42,7 +42,7 @@ app.get("/listings", (req, res) => {res.render("listings", { title: "Browse List
 app.get("/listings/new", (req, res) => {res.render("create-listing", { title: "Create Listing" })});
 app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
 
-app.get("/profile", requiredLogin, (req, res) => {
+app.get("/profile", requiredLogin, async(req, res) => {
   try {
     // get the user. if no user, bring them to log in
     const user = await User.findById(req.session.user.id);
