@@ -39,7 +39,9 @@ function requiredLogin(req, res, next) {
 // Temporary routes
 app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
 app.get("/listings", (req, res) => {res.render("listings", { title: "Browse Listings" })});
-app.get("/listings/new", (req, res) => {res.render("create-listing", { title: "Create Listing" })});
+
+app.get("/listings/new", requiredLogin, (req, res) => {res.render("create-listing", { title: "Create Listing" })});
+
 app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
 
 app.get("/profile", requiredLogin, async(req, res) => {
