@@ -45,6 +45,29 @@
         <p><a href="/login">Log in</a> to request a trade.</p>
     <% } %>
 
+    <section class="similar-listings">
+        <h3>Similar Dice Listings</h3>
+
+        <% if(recommendedListings.length === 0) { %>
+            <p>No similar listings found yet.</p>
+        <% } else { %>
+            <div class="recommendation-grid">
+                <% recommendedListings.forEach(recommendedListing => { %>
+                    <article class="recommendation-card">
+                        <h4>
+                            <a href="/listings/<%= recommendedListing._id %>"><%= recommendedListing.title %></a>
+                        </h4>
+                        <p><strong>Dice Type:</strong> <%= recommendedListing.diceType %></p>
+                        <p><strong>Material:</strong> <%= recommendedListing.material %></p>
+                        <p><strong>Color:</strong> <%= recommendedListing.color %></p>
+                        <p><strong>Condition:</strong> <%= recommendedListing.condition %></p>
+                        <p><strong>Preferred Trade:</strong> <%= recommendedListing.preferredTrade %></p>
+                    </article>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
+
     <p>
         <a href="/listings">Back to listings</a>
     </p>

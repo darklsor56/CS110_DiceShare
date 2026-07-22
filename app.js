@@ -163,9 +163,45 @@ app.get("/listings/:id", async(req, res) => {
       return res.status(404).send("Listing not found.")
     }
 
+    const otherListings = await DiceListing.find({
+      _id: { $ne: listing._id },
+      status: "Available"
+    }).sort({ createdAt: -1 });
+
+    const sameText = (firstValue, secondValue) => {
+      return firstValue && secondValue && firstValue.toLowerCase() === secondValue.toLowerCase();
+    };
+
+    const listingTags = listing.tags.map(tag => tag.toLowerCase());
+
+    const recommendedListings = otherListings
+      .map(otherListing => {
+        let score = 0;
+
+        if(sameText(listing.diceType, otherListing.diceType)) score += 3;
+        if(sameText(listing.material, otherListing.material)) score += 3;
+        if(sameText(listing.color, otherListing.color)) score += 2;
+        if(sameText(listing.condition, otherListing.condition)) score += 2;
+        if(sameText(listing.location, otherListing.location)) score += 1;
+
+        otherListing.tags.forEach(tag => {
+          if(listingTags.includes(tag.toLowerCase())) score += 1;
+        });
+
+        return {
+          listing: otherListing,
+          score
+        };
+      })
+      .filter(recommendation => recommendation.score > 0)
+      .sort((first, second) => second.score - first.score)
+      .slice(0, 4)
+      .map(recommendation => recommendation.listing);
+
     res.render("listing-detail", {
       title: listing.title,
-      listing
+      listing,
+      recommendedListings
     });
   } catch(error) {
     console.error(error);

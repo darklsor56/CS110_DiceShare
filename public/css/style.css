@@ -258,6 +258,33 @@ footer {
   color: #777;
 }
 
+.similar-listings {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.recommendation-card {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.recommendation-card h4 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.recommendation-card p {
+  margin: 0.35rem 0;
+}
+
 .delete-form {
   display: inline;
   margin-left: 0.5rem;
