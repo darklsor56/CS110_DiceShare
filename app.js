@@ -82,7 +82,23 @@ app.post("/listings", requiredLogin, async(req, res) => {
 
 app.get("/listings/new", requiredLogin, (req, res) => {res.render("create-listing", { title: "Create Listing" })});
 
-app.get("/listings/:id", (req, res) => {res.render("listing-detail", { title: "Listing Detail" })});
+app.get("/listings/:id", (req, res) => {
+  try {
+    const listing = await DiceListing.findById(req.params.id).populate("owner");
+
+    if(!listing) {
+      return res.status(404).send("Listing not found.")
+    }
+
+    res.render("listing-detail", {
+      title: listing.title,
+      listing
+    });
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not load listing.");
+  }
+});
 
 app.get("/profile", requiredLogin, async(req, res) => {
   try {
