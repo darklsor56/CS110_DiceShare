@@ -41,7 +41,7 @@ app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
 
 app.get("/listings", async(req, res) => {
   try {
-    const listings = (await DiceListing.find().populate("owner")).toSorted({ createdAt: -1 });
+    const listings = await DiceListing.find().populate("owner").sort({ createdAt: -1 });
 
     res.render("listings", {
       title: "Browse Listings",

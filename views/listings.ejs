@@ -7,7 +7,38 @@
     <p>
         <a class="button-link" href="/listings/new">Create a Listing</a>
     </p>
-    
+
+    <% if(listings.length === 0) { %>
+        <p>No dice listings have been posted yet</p>
+    <% } else { %>
+        <div class="listing-grid">
+        <% listings.forEach(listing => { %>
+            <article class="listing-card">
+                <% if (listing.imageUrl) { %>
+                    <img class="listing-card-image" src="<%= listing.imageUrl %>" alt="<%= listing.title %>">
+                <% } else { %>
+                    <div class="listing-card-placeholder">No Image</div>
+                <% } %>
+
+                <h3>
+                    <a href="/listings/<%= listing._id %>"><%= listing.title %></a>
+                </h3>
+
+                <p><strong>Type:</strong> <%= listing.diceType %></p>
+                <p><strong>Material:</strong> <%= listing.material %></p>
+                <p><strong>Color:</strong> <%= listing.color %></p>
+                <p><strong>Condition:</strong> <%= listing.condition %></p>
+                <p><strong>Location:</strong> <%= listing.location %></p>
+                <p><strong>Preferred Trade:</strong> <%= listing.preferredTrade %></p>
+                <p><strong>Status:</strong> <%= listing.status %></p>
+
+                <% if (listing.owner) { %>
+                    <p><strong>Posted by:</strong> <%= listing.owner.username %></p>
+                <% } %>
+            </article>
+        <% }) %>
+        </div>
+    <% } %>
 </section>
 
 <%- include("partials/footer") %>
