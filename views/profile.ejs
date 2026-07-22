@@ -16,6 +16,40 @@
     <p><strong>Completed Trades:</strong> <%= user.completedTradeCount %></p>
 
     <a class="button-link" href="/profile/edit">Edit Profile</a>
+
+    <hr>
+
+    <section class="profile-listings">
+        <h3>My Active Listings</h3>
+
+        <% if(userListings.length === 0) { %>
+            <p>You have not created any dice listings yet.</p>
+            <a class="button-link" href="/listings/new">Create Your First Listing</a>
+        <% } else { %>
+            <div class="listing-grid">
+                <% userListings.forEach(listing => { %>
+                    <article class="listing-card">
+                        <% if(listing.imageUrl) { %>
+                            <img class="listing-card-image" src="<%= listing.imageUrl %>" alt="<%= listing.title %>">
+                        <% } else { %>
+                            <div class="listing-card-placeholder">No Image</div>
+                        <% } %>
+
+                        <h4>
+                            <a href="/listings/<%= listing._id %>"><%= listing.title %></a>
+                        </h4>
+
+                        <p><strong>Type:</strong> <%= listing.diceType %></p>
+                        <p><strong>Material:</strong> <%= listing.material %></p>
+                        <p><strong>Color:</strong> <%= listing.color %></p>
+                        <p><strong>Condition:</strong> <%= listing.condition %></p>
+                        <p><strong>Status:</strong> <%= listing.status %></p>
+                        <p><strong>Preferred:</strong> <%= listing.preferredTrade %></p>
+                    </article>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
 </section>
 
 <%- include("partials/footer") %>
