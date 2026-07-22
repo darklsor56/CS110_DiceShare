@@ -1,6 +1,45 @@
 <%- include("partials/header") %>
 
-<h2>Page Name Here</h2>
-<p>This page will be built soon.</p>
+<section class="listing-detail">
+    <h2><% listing.title %></h2>
+
+    <% if(listing.imageUrl) { %>
+        <img class="listing-detail-image" src="<%= listing.imageUrl %>" alt="<%= listing.title %>">
+    <% } else { %>
+        <div class="listing-image-placeholder">No Image</div>
+    <% } %>
+
+    <p><strong>Description:</strong> <%= listing.description %></p>
+    <p><strong>Dice Type:</strong> <%= listing.diceType %></p>
+    <p><strong>Material:</strong> <%= listing.material %></p>
+    <p><strong>Color:</strong> <%= listing.color %></p>
+    <p><strong>Condition:</strong> <%= listing.condition %></p>
+    <p><strong>Number of Dice:</strong> <%= listing.numberOfDice %></p>
+    <p><strong>PrefferredTrade:</strong> <%= listing.prefferredTrade %></p>
+    <p><strong>Location:</strong> <%= listing.location %></p>
+    <p><strong>Status:</strong> <%= listing.status %></p>
+
+    <% if(listing.tags && listing.tags.length > 0) { %>
+        <p><strong>Tags:</strong> <%= listing.tags.join(", ") %></p>
+    <% } %>
+
+    <hr>
+
+    <h3>Owner</h3>
+    <p><strong>Username:</strong> <%= listing.owner.username %></p>
+    <p><strong>Owner Rating:</strong> <%= listing.owner.averageRating %> / 5</p>
+
+    <% if (currentUser && currentUser.id === listing.owner._id.toString()) { %>
+        <p>You own this listing.</p>
+    <% } else if(currentUser) { %>
+        <button type="button">Request Trade</button>
+    <% } else { %>
+        <p><a href="/login">Log in</a> to request a trade.</p>
+    <% } %>
+
+    <p>
+        <a href="/listings">Back to listings</a>
+    </p>
+</section>
 
 <%- include("partials/footer") %>
