@@ -11,6 +11,7 @@ describe("Page routes", () => {
   test("GET /listings should load the listings page", async () => {
     const res = await request(app).get("/listings");
     expect(res.statusCode).toBe(200);
+    expect(res.text).toContain("Browse Dice Listings");
   });
 
   test("GET /login should load the login page", async () => {

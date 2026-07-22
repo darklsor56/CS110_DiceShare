@@ -223,7 +223,8 @@ app.get("/listings/:id", async(req, res) => {
 
 app.post("/listings/:id/request", requiredLogin, async(req, res) => {
   try {
-    const message = typeof req.body.message === "string" ? req.body.message.trim() : "";
+    const requestBody = req.body || {};
+    const message = typeof requestBody.message === "string" ? requestBody.message.trim() : "";
 
     if(message.length > 500) {
       return res.status(400).send("Trade request messages must be 500 characters or fewer.");
@@ -255,9 +256,9 @@ app.post("/listings/:id/request", requiredLogin, async(req, res) => {
 
     let offeredListing;
 
-    if(req.body.offeredListing) {
+    if(requestBody.offeredListing) {
       offeredListing = await DiceListing.findOne({
-        _id: req.body.offeredListing,
+        _id: requestBody.offeredListing,
         owner: req.session.user.id,
         status: "Available"
       });

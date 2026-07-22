@@ -5,31 +5,32 @@ const Review = require("../models/Review");
 const TradeRequest = require("../models/TradeRequest");
 
 describe("Model validation", () => {
-  test("User requires username, email, and passwordHash", () => {
+  test("User requires username, email, and passwordHash", async() => {
     const user = new User({});
-    const error = user.validateSync();
+    const error = await user.validate().catch(validationError => validationError);
 
     expect(error.errors.username).toBeDefined();
     expect(error.errors.email).toBeDefined();
     expect(error.errors.passwordHash).toBeDefined();
   });
 
-  test("DiceListing requires core listing fields", () => {
+  test("DiceListing requires core listing fields", async() => {
     const listing = new DiceListing({});
-    const error = listing.validateSync();
+    const error = await listing.validate().catch(validationError => validationError);
 
     expect(error.errors.owner).toBeDefined();
     expect(error.errors.title).toBeDefined();
     expect(error.errors.description).toBeDefined();
     expect(error.errors.diceType).toBeDefined();
     expect(error.errors.material).toBeDefined();
+    expect(error.errors.color).toBeDefined();
     expect(error.errors.condition).toBeDefined();
     expect(error.errors.numberOfDice).toBeDefined();
     expect(error.errors.preferredTrade).toBeDefined();
     expect(error.errors.location).toBeDefined();
   });
 
-  test("Review rating must be between 1 and 5", () => {
+  test("Review rating must be between 1 and 5", async() => {
     const review = new Review({
       reviewer: new mongoose.Types.ObjectId(),
       reviewedUser: new mongoose.Types.ObjectId(),
@@ -37,11 +38,11 @@ describe("Model validation", () => {
       comment: "Too high"
     });
 
-    const error = review.validateSync();
+    const error = await review.validate().catch(validationError => validationError);
     expect(error.errors.rating).toBeDefined();
   });
 
-  test("TradeRequest rejects invalid status", () => {
+  test("TradeRequest rejects invalid status", async() => {
     const request = new TradeRequest({
       listing: new mongoose.Types.ObjectId(),
       requester: new mongoose.Types.ObjectId(),
@@ -49,7 +50,7 @@ describe("Model validation", () => {
       status: "Maybe"
     });
 
-    const error = request.validateSync();
+    const error = await request.validate().catch(validationError => validationError);
     expect(error.errors.status).toBeDefined();
   });
 });
