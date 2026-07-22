@@ -52,7 +52,7 @@ async function requireListingOwner(req, res, next) {
     next();
   } catch(error) {
     console.error(error);
-    res.status(500).sned("Could not verify listing owner.");
+    res.status(500).send("Could not verify listing owner.");
   }
 }
 
@@ -179,7 +179,7 @@ app.post("/listings/:id/edit", requiredLogin, requireListingOwner, async(req, re
   }
 });
 
-addEventListener.post("/listings/:id/delete", requiredLogin, requireListingOwner, async(req, res) => {
+app.post("/listings/:id/delete", requiredLogin, requireListingOwner, async(req, res) => {
   try {
     await DiceListing.findByIdAndDelete(req.params.id);
     res.redirect("/profile");
