@@ -2,6 +2,88 @@
 
 <section class="listing-form-container">
     <h2>Edit Dice Listing</h2>
+
+    <form class="listing-form" action="/listings/<%= listing._id %>/edit" method="POST">
+        <div class="form-group">
+            <label for="title">Listing Title</label>
+            <input type="text" id="title" name="title" value="<%= listing.title %>" maxlength="100" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="5" maxlength="1000" required><%= listing.description %></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="diceType">Dice Type</label>
+            <select id="diceType" name="diceType" required>
+                <% ["Full Set", "D20", "D12", "D10", "D8", "D6", "D4", "Percentile", "Mixed Lot", "D100", "Misc"].forEach(type => { %>
+                    <option value="<%= type %>" <%= listing.diceType === type ? "selected" : "" %>><%= type %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="material">Material</label>
+            <select id="material" name="material" required>
+                <% ["Plastic", "Resin", "Metal", "Quartz", "Glass", "Wood", "Gem", "Misc"].forEach(material => { %>
+                    <option value="<%= material %>" <%= listing.material === material ? "selected" : "" %>><%= material %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="color">Main Color</label>
+            <input type="text" id="color" name="color" value="<%= listing.color %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="condition">Condition</label>
+            <select id="condition" name="condition" required>
+                <% ["New", "Like New", "Used", "Worn", "Broken"].forEach(condition => { %>
+                    <option value="<%= condition %>" <%= listing.condition === condition ? "selected" : "" %>><%= condition %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="numberOfDice">Number of Dice</label>
+            <input type="number" id="numberOfDice" name="numberOfDice" min="1" value="<%= listing.numberOfDice %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="preferredTrade">Preferred Trade</label>
+            <input type="text" id="preferredTrade" name="preferredTrade" value="<%= listing.preferredTrade %>" maxlength="200" required>
+        </div>
+
+        <div class="form-group">
+            <label for="location">General Location</label>
+            <input type="text" id="location" name="location" value="<%= listing.location %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="imageUrl">Image URL</label>
+            <input type="url" id="imageUrl" name="imageUrl" value="<%= listing.imageUrl || '' %>">
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Tags</label>
+            <input type="text" id="tags" name="tags" value="<%= listing.tags ? listing.tags.join(', ') : '' %>">
+            <small>Separate tags with commas.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+                <% ["Available", "Pending", "Traded"].forEach(status => { %>
+                    <option value="<%= status %>" <%= listing.status === status ? "selected" : "" %>><%= status %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <button type="submit">Save Changes</button>
+        <a href="/listings/<%= listing._id %>">Cancel</a>
+    </form>
 </section>
 
 <%- include("partials/footer") %>
