@@ -38,7 +38,47 @@ function requiredLogin(req, res, next) {
 
 // Temporary routes
 app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
+
 app.get("/listings", (req, res) => {res.render("listings", { title: "Browse Listings" })});
+app.post("/listings", requiredLogin, async(req, res) => {
+  try {
+    const {
+      title,
+      description,
+      diceType,
+      material,
+      color,
+      condition,
+      numberOfDice,
+      prefferredTrade,
+      location,
+      imageUrl,
+      tags
+    } = req.body;
+
+    const tagArray = tags ? tags.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0) : [];
+
+    const newListing = await DiceListing.create({
+      owner: req.session.user.id,
+      title,
+      description,
+      diceType,
+      material,
+      color,
+      condition,
+      numberOfDice,
+      prefferredTrade,
+      location,
+      imageUrl,
+      tags: tagArray
+    });
+
+    res.redirect(`/listings/${newListing._id}`);
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not create listing");
+  }
+});
 
 app.get("/listings/new", requiredLogin, (req, res) => {res.render("create-listing", { title: "Create Listing" })});
 
