@@ -157,3 +157,34 @@ footer {
 .button-link:hover {
   text-decoration: underline;
 }
+
+.listing-form-container,
+.listing-detail {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.listing-form {
+  margin-top: 1.5rem;
+}
+
+.listing-detail-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border: 1px solid #ddd;
+  margin-bottom: 1rem;
+}
+
+.listing-image-placeholder {
+  width: 100%;
+  max-width: 500px;
+  height: 250px;
+  border: 1px solid #ddd;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  margin-bottom: 1rem;
+}
