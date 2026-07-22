@@ -4,12 +4,67 @@
     <h2>Browse Dice Listings</h2>
     <p>Find dice sets posted by local dice collectors.</p>
 
+    <form class="search-form" action="/listings" method="GET">
+        <div class="form-group search-keyword">
+            <label for="q">Search listings</label>
+            <input
+                type="search"
+                id="q"
+                name="q"
+                value="<%= searchValues.q %>"
+                placeholder="Try metal, blue, or d20"
+            >
+        </div>
+
+        <div class="search-filters">
+            <div class="form-group">
+                <label for="diceType">Dice type</label>
+                <select id="diceType" name="diceType">
+                    <option value="">All dice types</option>
+                    <% ["Full Set", "D20", "D12", "D10", "D8", "D6", "D4", "Percentile", "Mixed Lot", "D100", "Misc"].forEach(type => { %>
+                        <option value="<%= type %>" <%= searchValues.diceType === type ? "selected" : "" %>><%= type %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="material">Material</label>
+                <select id="material" name="material">
+                    <option value="">All materials</option>
+                    <% ["Plastic", "Resin", "Metal", "Quartz", "Glass", "Wood", "Gem", "Misc"].forEach(material => { %>
+                        <option value="<%= material %>" <%= searchValues.material === material ? "selected" : "" %>><%= material %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="condition">Condition</label>
+                <select id="condition" name="condition">
+                    <option value="">All conditions</option>
+                    <% ["New", "Like New", "Used", "Worn", "Broken"].forEach(condition => { %>
+                        <option value="<%= condition %>" <%= searchValues.condition === condition ? "selected" : "" %>><%= condition %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" value="<%= searchValues.location %>" placeholder="City or area">
+            </div>
+        </div>
+
+        <div class="search-actions">
+            <button type="submit">Search</button>
+            <a href="/listings">Clear search</a>
+        </div>
+    </form>
+
     <p>
         <a class="button-link" href="/listings/new">Create a Listing</a>
     </p>
 
     <% if(listings.length === 0) { %>
-        <p>No dice listings have been posted yet</p>
+        <p>No listings matched your search.</p>
     <% } else { %>
         <div class="listing-grid">
         <% listings.forEach(listing => { %>

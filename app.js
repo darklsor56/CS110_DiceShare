@@ -61,11 +61,52 @@ app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
 
 app.get("/listings", async(req, res) => {
   try {
-    const listings = await DiceListing.find().populate("owner").sort({ createdAt: -1 });
+    const searchValues = {
+      q: typeof req.query.q === "string" ? req.query.q.trim() : "",
+      diceType: typeof req.query.diceType === "string" ? req.query.diceType.trim() : "",
+      material: typeof req.query.material === "string" ? req.query.material.trim() : "",
+      condition: typeof req.query.condition === "string" ? req.query.condition.trim() : "",
+      location: typeof req.query.location === "string" ? req.query.location.trim() : ""
+    };
+
+    const query = {};
+
+    // Escape special characters so the search text is treated as regular text.
+    const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    if(searchValues.q) {
+      const keyword = new RegExp(escapeRegex(searchValues.q), "i");
+      query.$or = [
+        { title: keyword },
+        { description: keyword },
+        { diceType: keyword },
+        { material: keyword },
+        { color: keyword },
+        { condition: keyword },
+        { preferredTrade: keyword },
+        { location: keyword },
+        { tags: keyword }
+      ];
+    }
+
+    // These menu filters match the complete field value, ignoring capitalization.
+    ["diceType", "material", "condition"].forEach(field => {
+      if(searchValues[field]) {
+        query[field] = new RegExp(`^${escapeRegex(searchValues[field])}$`, "i");
+      }
+    });
+
+    // Location allows a city or area to match part of the saved location.
+    if(searchValues.location) {
+      query.location = new RegExp(escapeRegex(searchValues.location), "i");
+    }
+
+    const listings = await DiceListing.find(query).populate("owner").sort({ createdAt: -1 });
 
     res.render("listings", {
       title: "Browse Listings",
-      listings
+      listings,
+      searchValues
     });
   } catch(error) {
     console.error(error);

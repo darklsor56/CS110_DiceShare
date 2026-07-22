@@ -193,6 +193,31 @@ footer {
   margin-top: 2rem;
 }
 
+.search-form {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.search-keyword input,
+.search-filters input,
+.search-filters select {
+  width: 100%;
+}
+
+.search-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.search-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .listing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
