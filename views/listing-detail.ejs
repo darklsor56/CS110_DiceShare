@@ -27,7 +27,7 @@
 
     <h3>Owner</h3>
     <p><strong>Username:</strong> <a href="/users/<%= listing.owner._id %>"><%= listing.owner.username %></a></p>
-    <p><strong>Owner Rating:</strong> <%= listing.owner.averageRating %> / 5</p>
+    <p><strong>Owner Rating:</strong> <%= Number(listing.owner.averageRating || 0).toFixed(2) %> / 5</p>
 
     <% if (currentUser && currentUser.id === listing.owner._id.toString()) { %>
         <p>You own this listing.</p>

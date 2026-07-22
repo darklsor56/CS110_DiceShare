@@ -14,7 +14,7 @@
     <% } %>
     <p><strong>Location:</strong> <%= user.location || "No location added yet." %></p>
     <p><strong>Bio:</strong> <%= user.bio || "No bio added yet." %></p>
-    <p><strong>Average Rating:</strong> <%= user.averageRating %> / 5</p>
+    <p><strong>Average Rating:</strong> <%= Number(user.averageRating || 0).toFixed(2) %> / 5</p>
     <p><strong>Completed Trades:</strong> <%= user.completedTradeCount %></p>
 
     <% if(isOwnProfile) { %>

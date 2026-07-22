@@ -80,7 +80,11 @@ app.get("/listings", async(req, res) => {
       location: typeof req.query.location === "string" ? req.query.location.trim() : ""
     };
 
-    const query = {};
+    // Traded listings remain available through profiles and direct links,
+    // but they are hidden from normal browsing and search results.
+    const query = {
+      status: { $ne: "Traded" }
+    };
 
     // Escape special characters so the search text is treated as regular text.
     const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
