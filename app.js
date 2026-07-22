@@ -36,6 +36,26 @@ function requiredLogin(req, res, next) {
   next();
 }
 
+async function requireListingOwner(req, res, next) {
+  try {
+    const listing = await DiceListing.findById(req.params.id);
+
+    if(!listing) {
+      return res.status(404).send("Listing not found.");
+    }
+
+    if(listing.owner.toString() !== req.session.user.id) {
+      return res.status(403).send("You do not have permission to modify this listing.");
+    }
+
+    req.listing = listing;
+    next();
+  } catch(error) {
+    console.error(error);
+    res.status(500).sned("Could not verify listing owner.");
+  }
+}
+
 // Temporary routes
 app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
 
