@@ -232,3 +232,20 @@ footer {
   justify-content: center;
   color: #777;
 }
+
+.delete-form {
+  display: inline;
+  margin-left: 0.5rem;
+}
+
+.delete-form button {
+  background: #8b0000;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.delete-form button:hover {
+  text-decoration: underline;
+}
