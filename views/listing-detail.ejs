@@ -40,7 +40,32 @@
             </button>
         </form>
     <% } else if(currentUser) { %>
-        <button type="button">Request Trade</button>
+        <section class="trade-request-form-container">
+            <h3>Request Trade</h3>
+
+            <% if(requestCreated) { %>
+                <p class="success-message">Your trade request was sent.</p>
+            <% } %>
+
+            <form action="/listings/<%= listing._id %>/request" method="POST" class="trade-request-form">
+                <div class="form-group">
+                    <label for="offeredListing">Offer one of your available listings (optional)</label>
+                    <select id="offeredListing" name="offeredListing">
+                        <option value="">No listing offered</option>
+                        <% offerableListings.forEach(offerableListing => { %>
+                            <option value="<%= offerableListing._id %>"><%= offerableListing.title %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message (optional)</label>
+                    <textarea id="message" name="message" rows="4" maxlength="500" placeholder="Add a short note for the listing owner"></textarea>
+                </div>
+
+                <button type="submit">Send Trade Request</button>
+            </form>
+        </section>
     <% } else { %>
         <p><a href="/login">Log in</a> to request a trade.</p>
     <% } %>

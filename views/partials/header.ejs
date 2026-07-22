@@ -16,6 +16,7 @@
             <a href="/listings">Listings</a>
             <a href="/listings/new">Create Listings</a>
             <% if(currentUser) { %>
+            <a href="/trade-requests">Trade Requests</a>
             <a href="/profile"><%= currentUser.username %></a>
             <form action="/logout" method="POST" class="logout-form">
                 <button type="submit">Log Out</button>

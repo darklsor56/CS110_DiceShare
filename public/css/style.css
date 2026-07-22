@@ -285,6 +285,65 @@ footer {
   margin: 0.35rem 0;
 }
 
+.trade-request-form-container,
+.request-section {
+  margin-top: 2rem;
+}
+
+.trade-request-form {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.trade-request-form select,
+.trade-request-form textarea {
+  display: block;
+  width: 100%;
+}
+
+.success-message {
+  padding: 0.75rem;
+  border: 1px solid #8dbb7f;
+  background: #eef8eb;
+  color: #24551d;
+}
+
+.request-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.request-card {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.request-card h4 {
+  margin-top: 0;
+}
+
+.request-card p {
+  margin: 0.5rem 0;
+}
+
+.request-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.request-actions button {
+  margin-top: 0;
+}
+
+.secondary-button {
+  background: #eee;
+  border: 1px solid #999;
+}
+
 .delete-form {
   display: inline;
   margin-left: 0.5rem;

@@ -1,0 +1,95 @@
+<%- include("partials/header") %>
+
+<section class="trade-requests-page">
+    <h2>Trade Requests</h2>
+    <p>Review requests you have received and track requests you have sent.</p>
+
+    <% if(successMessage) { %>
+        <p class="success-message"><%= successMessage %></p>
+    <% } %>
+
+    <section class="request-section">
+        <h3>Requests I Received</h3>
+
+        <% if(receivedRequests.length === 0) { %>
+            <p>You have not received any trade requests yet.</p>
+        <% } else { %>
+            <div class="request-grid">
+                <% receivedRequests.forEach(tradeRequest => { %>
+                    <article class="request-card">
+                        <% if(tradeRequest.listing) { %>
+                            <h4><a href="/listings/<%= tradeRequest.listing._id %>"><%= tradeRequest.listing.title %></a></h4>
+                        <% } else { %>
+                            <h4>Listing no longer available</h4>
+                        <% } %>
+
+                        <p><strong>Requester:</strong> <%= tradeRequest.requester ? tradeRequest.requester.username : "Unknown user" %></p>
+                        <p><strong>Owner:</strong> <%= tradeRequest.owner ? tradeRequest.owner.username : "Unknown user" %></p>
+                        <p><strong>Offered Listing:</strong>
+                            <% if(tradeRequest.offeredListing) { %>
+                                <a href="/listings/<%= tradeRequest.offeredListing._id %>"><%= tradeRequest.offeredListing.title %></a>
+                            <% } else { %>
+                                None
+                            <% } %>
+                        </p>
+                        <p><strong>Message:</strong> <%= tradeRequest.message || "No message provided." %></p>
+                        <p><strong>Status:</strong> <%= tradeRequest.status %></p>
+                        <p><strong>Created:</strong> <%= tradeRequest.createdAt.toLocaleDateString() %></p>
+
+                        <% if(tradeRequest.status === "Pending") { %>
+                            <div class="request-actions">
+                                <form action="/trade-requests/<%= tradeRequest._id %>/accept" method="POST">
+                                    <button type="submit">Accept</button>
+                                </form>
+                                <form action="/trade-requests/<%= tradeRequest._id %>/decline" method="POST">
+                                    <button type="submit" class="secondary-button">Decline</button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </article>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
+
+    <section class="request-section">
+        <h3>Requests I Sent</h3>
+
+        <% if(sentRequests.length === 0) { %>
+            <p>You have not sent any trade requests yet.</p>
+        <% } else { %>
+            <div class="request-grid">
+                <% sentRequests.forEach(tradeRequest => { %>
+                    <article class="request-card">
+                        <% if(tradeRequest.listing) { %>
+                            <h4><a href="/listings/<%= tradeRequest.listing._id %>"><%= tradeRequest.listing.title %></a></h4>
+                        <% } else { %>
+                            <h4>Listing no longer available</h4>
+                        <% } %>
+
+                        <p><strong>Requester:</strong> <%= tradeRequest.requester ? tradeRequest.requester.username : "Unknown user" %></p>
+                        <p><strong>Owner:</strong> <%= tradeRequest.owner ? tradeRequest.owner.username : "Unknown user" %></p>
+                        <p><strong>Offered Listing:</strong>
+                            <% if(tradeRequest.offeredListing) { %>
+                                <a href="/listings/<%= tradeRequest.offeredListing._id %>"><%= tradeRequest.offeredListing.title %></a>
+                            <% } else { %>
+                                None
+                            <% } %>
+                        </p>
+                        <p><strong>Message:</strong> <%= tradeRequest.message || "No message provided." %></p>
+                        <p><strong>Status:</strong> <%= tradeRequest.status %></p>
+                        <p><strong>Created:</strong> <%= tradeRequest.createdAt.toLocaleDateString() %></p>
+
+                        <% if(tradeRequest.status === "Pending") { %>
+                            <form action="/trade-requests/<%= tradeRequest._id %>/cancel" method="POST" class="request-actions">
+                                <button type="submit" class="secondary-button">Cancel Request</button>
+                            </form>
+                        <% } %>
+                    </article>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
+</section>
+
+<%- include("partials/footer") %>

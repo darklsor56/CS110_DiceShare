@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const connectDB = require("../config/db");
 const User = require("../models/User");
 const DiceListing = require("../models/DiceListings");
+const TradeRequest = require("../models/TradeRequest");
 
 async function seedDatabase() {
   try {
@@ -24,6 +25,12 @@ async function seedDatabase() {
     const demoUsers = await User.find({ email: { $in: demoEmails } });
     const demoUserIds = demoUsers.map(user => user._id);
 
+    await TradeRequest.deleteMany({
+      $or: [
+        { requester: { $in: demoUserIds } },
+        { owner: { $in: demoUserIds } }
+      ]
+    });
     await DiceListing.deleteMany({ owner: { $in: demoUserIds } });
     await User.deleteMany({ email: { $in: demoEmails } });
 

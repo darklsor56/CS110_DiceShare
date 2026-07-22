@@ -3,6 +3,7 @@ const path = require("path");
 const DiceListing = require("./models/DiceListings")
 const bcrypt = require("bcrypt")
 const User = require("./models/User");
+const TradeRequest = require("./models/TradeRequest");
 const session = require("express-session");
 
 const app = express();
@@ -198,14 +199,195 @@ app.get("/listings/:id", async(req, res) => {
       .slice(0, 4)
       .map(recommendation => recommendation.listing);
 
+    let offerableListings = [];
+
+    if(req.session.user && req.session.user.id !== listing.owner._id.toString()) {
+      offerableListings = await DiceListing.find({
+        owner: req.session.user.id,
+        status: "Available"
+      }).sort({ createdAt: -1 });
+    }
+
     res.render("listing-detail", {
       title: listing.title,
       listing,
-      recommendedListings
+      recommendedListings,
+      offerableListings,
+      requestCreated: req.query.request === "created"
     });
   } catch(error) {
     console.error(error);
     res.status(500).send("Could not load listing.");
+  }
+});
+
+app.post("/listings/:id/request", requiredLogin, async(req, res) => {
+  try {
+    const message = typeof req.body.message === "string" ? req.body.message.trim() : "";
+
+    if(message.length > 500) {
+      return res.status(400).send("Trade request messages must be 500 characters or fewer.");
+    }
+
+    const listing = await DiceListing.findById(req.params.id);
+
+    if(!listing) {
+      return res.status(404).send("Listing not found.");
+    }
+
+    if(listing.owner.toString() === req.session.user.id) {
+      return res.status(403).send("You cannot request a trade on your own listing.");
+    }
+
+    if(listing.status !== "Available") {
+      return res.status(400).send("This listing is not available for trade.");
+    }
+
+    const existingRequest = await TradeRequest.findOne({
+      listing: listing._id,
+      requester: req.session.user.id,
+      status: "Pending"
+    });
+
+    if(existingRequest) {
+      return res.status(400).send("You already have a pending request for this listing.");
+    }
+
+    let offeredListing;
+
+    if(req.body.offeredListing) {
+      offeredListing = await DiceListing.findOne({
+        _id: req.body.offeredListing,
+        owner: req.session.user.id,
+        status: "Available"
+      });
+
+      if(!offeredListing) {
+        return res.status(400).send("The offered listing is not available or does not belong to you.");
+      }
+    }
+
+    await TradeRequest.create({
+      listing: listing._id,
+      requester: req.session.user.id,
+      owner: listing.owner,
+      offeredListing: offeredListing ? offeredListing._id : undefined,
+      message,
+      status: "Pending"
+    });
+
+    res.redirect(`/listings/${listing._id}?request=created`);
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not create trade request.");
+  }
+});
+
+app.get("/trade-requests", requiredLogin, async(req, res) => {
+  try {
+    const populateFields = ["listing", "requester", "owner", "offeredListing"];
+
+    const receivedRequests = await TradeRequest.find({ owner: req.session.user.id })
+      .populate(populateFields)
+      .sort({ createdAt: -1 });
+
+    const sentRequests = await TradeRequest.find({ requester: req.session.user.id })
+      .populate(populateFields)
+      .sort({ createdAt: -1 });
+
+    const successMessages = {
+      accepted: "Trade request accepted.",
+      declined: "Trade request declined.",
+      canceled: "Trade request canceled."
+    };
+
+    res.render("trade-requests", {
+      title: "Trade Requests",
+      receivedRequests,
+      sentRequests,
+      successMessage: successMessages[req.query.message] || ""
+    });
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not load trade requests.");
+  }
+});
+
+app.post("/trade-requests/:id/accept", requiredLogin, async(req, res) => {
+  try {
+    const tradeRequest = await TradeRequest.findById(req.params.id);
+
+    if(!tradeRequest) {
+      return res.status(404).send("Trade request not found.");
+    }
+
+    if(tradeRequest.owner.toString() !== req.session.user.id) {
+      return res.status(403).send("Only the listing owner can accept this request.");
+    }
+
+    if(tradeRequest.status !== "Pending") {
+      return res.status(400).send("Only pending requests can be accepted.");
+    }
+
+    tradeRequest.status = "Accepted";
+    await tradeRequest.save();
+
+    res.redirect("/trade-requests?message=accepted");
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not accept trade request.");
+  }
+});
+
+app.post("/trade-requests/:id/decline", requiredLogin, async(req, res) => {
+  try {
+    const tradeRequest = await TradeRequest.findById(req.params.id);
+
+    if(!tradeRequest) {
+      return res.status(404).send("Trade request not found.");
+    }
+
+    if(tradeRequest.owner.toString() !== req.session.user.id) {
+      return res.status(403).send("Only the listing owner can decline this request.");
+    }
+
+    if(tradeRequest.status !== "Pending") {
+      return res.status(400).send("Only pending requests can be declined.");
+    }
+
+    tradeRequest.status = "Declined";
+    await tradeRequest.save();
+
+    res.redirect("/trade-requests?message=declined");
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not decline trade request.");
+  }
+});
+
+app.post("/trade-requests/:id/cancel", requiredLogin, async(req, res) => {
+  try {
+    const tradeRequest = await TradeRequest.findById(req.params.id);
+
+    if(!tradeRequest) {
+      return res.status(404).send("Trade request not found.");
+    }
+
+    if(tradeRequest.requester.toString() !== req.session.user.id) {
+      return res.status(403).send("Only the requester can cancel this request.");
+    }
+
+    if(tradeRequest.status !== "Pending") {
+      return res.status(400).send("Only pending requests can be canceled.");
+    }
+
+    tradeRequest.status = "Canceled";
+    await tradeRequest.save();
+
+    res.redirect("/trade-requests?message=canceled");
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not cancel trade request.");
   }
 });
 
