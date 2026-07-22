@@ -132,6 +132,53 @@ app.get("/listings/:id", async(req, res) => {
   }
 });
 
+app.get("/listings/:id/edit", requiredLogin, requireListingOwner, (req, res) => {
+  res.render("edit-listing", {
+    title: "Edit Listing",
+    listing: req.listing
+  });
+});
+app.post("/listings/:id/edit", requiredLogin, requireListingOwner, async(req, res) => {
+  try {
+    const {
+      title,
+      description,
+      diceType,
+      material,
+      color,
+      condition,
+      numberOfDice,
+      preferredTrade,
+      location,
+      imageUrl,
+      tags,
+      status
+    } = req.body;
+
+    const tagArray = tags ? tags.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0) : [];
+
+    await DiceListing.findByIdAndUpdate(req.params.id, {
+      title,
+      description,
+      diceType,
+      material,
+      color,
+      condition,
+      numberOfDice,
+      preferredTrade,
+      location,
+      imageUrl,
+      tags: tagArray,
+      status
+    });
+
+    res.redirect(`/listings/${req.params.id}`);
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not edit listing.");
+  }
+});
+
 app.get("/profile", requiredLogin, async(req, res) => {
   try {
     // get the user. if no user, bring them to log in
