@@ -109,9 +109,15 @@ app.get("/profile", requiredLogin, async(req, res) => {
       return res.redirect("/login");
     }
 
+    // get listings owned by this user
+    const userListings = await DiceListing.find({
+      owner: req.session.user.id
+    }).sort({ createdAt: -1 });
+
     res.render("profile", {
       title: "Profile",
-      user
+      user,
+      userListings
     });
   } catch(error) {
     console.error(error);
