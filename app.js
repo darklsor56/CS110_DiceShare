@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const crypto = require("crypto");
 const DiceListing = require("./models/DiceListings")
 const bcrypt = require("bcrypt")
 const User = require("./models/User");
@@ -646,16 +647,73 @@ app.post("/login", async(req, res) => {
       return res.status(400).send("Invalid email or password.");
     }
 
+    const twoFactorCode = crypto.randomInt(100000, 1000000).toString();
+
+    delete req.session.user;
+    req.session.pending2FA = {
+      userId: user._id.toString(),
+      code: twoFactorCode,
+      expiresAt: Date.now() + (5 * 60 * 1000)
+    };
+
+    console.log(`[2FA demo] Code for ${user.email}: ${twoFactorCode}`);
+
+    return res.redirect("/verify-2fa");
+  } catch(error) {
+    console.error(error);
+    return res.status(500).send("Log in failed.");
+  }
+});
+
+app.get("/verify-2fa", (req, res) => {
+  if(req.session.user) {
+    return res.redirect("/profile");
+  }
+
+  if(!req.session.pending2FA) {
+    return res.redirect("/login");
+  }
+
+  res.render("verify-2fa", { title: "Verify Two-Factor Code" });
+});
+
+app.post("/verify-2fa", async(req, res) => {
+  try {
+    const pending2FA = req.session.pending2FA;
+
+    if(!pending2FA) {
+      return res.status(400).send("No two-factor verification is pending. Please log in again.");
+    }
+
+    if(Date.now() > pending2FA.expiresAt) {
+      delete req.session.pending2FA;
+      return res.status(400).send("Your two-factor code has expired. Please log in again.");
+    }
+
+    const submittedCode = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+
+    if(!/^\d{6}$/.test(submittedCode) || submittedCode !== pending2FA.code) {
+      return res.status(400).send("Invalid two-factor code.");
+    }
+
+    const user = await User.findById(pending2FA.userId);
+
+    if(!user) {
+      delete req.session.pending2FA;
+      return res.status(404).send("User not found. Please log in again.");
+    }
+
     req.session.user = {
-      id: user._id,
+      id: user._id.toString(),
       username: user.username,
       email: user.email
-    }
+    };
+    delete req.session.pending2FA;
 
     return res.redirect("/profile");
   } catch(error) {
     console.error(error);
-    return res.status(500).send("Log in failed.");
+    return res.status(500).send("Two-factor verification failed.");
   }
 });
 

@@ -1,6 +1,12 @@
 # CS110_DiceShare
 This is a project for the summer A 2026 course for UCR's CS110. This is a concept of a dice sharing website.
 
+## Local Demo Two-Factor Authentication
+
+After a password is accepted, DiceShare generates a temporary six-digit verification code and prints it in the server terminal. Enter that code on the `/verify-2fa` page within five minutes to finish logging in.
+
+Console delivery is for local demonstration only. It is not appropriate for production because anyone with terminal access can read the code. A production deployment would replace it with a proper authenticator-app TOTP flow or securely delivered email/SMS codes, along with rate limiting and other account protections. Currently looking into a 2FA Authentication App like 2FAS Authenticator.
+
 ## **DiceShare** 
 
 A Local TTRPG Dice Trading Platform by Daniel Remedios. 
@@ -387,5 +393,5 @@ The tests will happen in Google Chrome to make sure pages display correctly and 
 
 ## **Conclusion** 
 
-DiceShare is a local dice trading website for TTRPG players who want to exchange dice with others in their community. DiceShare shares and trades physical gaming resources instead of buying new items. It will include user profiles, authentication, dice listings, search, ratings, comments, recommendations, and a database-backed system. I find the idea realistic for the project timeline while still allowing room for extra features such as messaging, trade requests, favorites, and an admin page. 
+DiceShare is a local dice trading website for dice collectors who want to exchange dice with others in their community. DiceShare shares and trades physical gaming resources instead of buying new items. It will include user profiles, authentication, dice listings, search, ratings, comments, recommendations, and a database-backed system. I find the idea realistic for the project timeline while still allowing room for extra features such as messaging, trade requests, favorites, and an admin page. 
 
