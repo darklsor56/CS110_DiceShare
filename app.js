@@ -836,15 +836,4 @@ app.post("/register", async(req, res) => {
   }
 });
 
-// Very temp route
-app.get("/db-test", async (req, res) => {
-  try {
-    const count = await DiceListing.countDocuments();
-    res.send(`Database works. Dice listings count: ${count}`);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Database test failed");
-  }
-});
-
 module.exports = app;
