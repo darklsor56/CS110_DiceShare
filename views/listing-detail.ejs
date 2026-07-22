@@ -1,7 +1,7 @@
 <%- include("partials/header") %>
 
 <section class="listing-detail">
-    <h2><% listing.title %></h2>
+    <h2><%= listing.title %></h2>
 
     <% if(listing.imageUrl) { %>
         <img class="listing-detail-image" src="<%= listing.imageUrl %>" alt="<%= listing.title %>">
@@ -15,7 +15,7 @@
     <p><strong>Color:</strong> <%= listing.color %></p>
     <p><strong>Condition:</strong> <%= listing.condition %></p>
     <p><strong>Number of Dice:</strong> <%= listing.numberOfDice %></p>
-    <p><strong>PrefferredTrade:</strong> <%= listing.prefferredTrade %></p>
+    <p><strong>Preferred Trade:</strong> <%= listing.preferredTrade %></p>
     <p><strong>Location:</strong> <%= listing.location %></p>
     <p><strong>Status:</strong> <%= listing.status %></p>
 

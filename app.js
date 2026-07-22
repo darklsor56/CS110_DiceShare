@@ -50,7 +50,7 @@ app.post("/listings", requiredLogin, async(req, res) => {
       color,
       condition,
       numberOfDice,
-      prefferredTrade,
+      preferredTrade,
       location,
       imageUrl,
       tags
@@ -67,7 +67,7 @@ app.post("/listings", requiredLogin, async(req, res) => {
       color,
       condition,
       numberOfDice,
-      prefferredTrade,
+      preferredTrade,
       location,
       imageUrl,
       tags: tagArray
@@ -82,7 +82,7 @@ app.post("/listings", requiredLogin, async(req, res) => {
 
 app.get("/listings/new", requiredLogin, (req, res) => {res.render("create-listing", { title: "Create Listing" })});
 
-app.get("/listings/:id", (req, res) => {
+app.get("/listings/:id", async(req, res) => {
   try {
     const listing = await DiceListing.findById(req.params.id).populate("owner");
 
