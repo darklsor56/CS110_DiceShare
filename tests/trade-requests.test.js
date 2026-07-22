@@ -1,6 +1,7 @@
 const request = require("supertest");
 
 const app = require("../app");
+const DiceListing = require("../models/DiceListings");
 const TradeRequest = require("../models/TradeRequest");
 const { createTestUser, loginAgent, createTestListing } = require("./helpers");
 
@@ -130,7 +131,19 @@ describe("Trade requests", () => {
     expect(await TradeRequest.countDocuments()).toBe(0);
   });
 
-  test("a user cannot request a listing that is not available", async() => {
+  test("a user cannot request a pending listing", async() => {
+    const { requester, requesterPassword, listing } = await createUsersAndListing();
+    listing.status = "Pending";
+    await listing.save();
+    const agent = await loginAgent(requester, requesterPassword);
+
+    const response = await agent.post(`/listings/${listing._id}/request`);
+
+    expect(response.statusCode).toBe(400);
+    expect(await TradeRequest.countDocuments()).toBe(0);
+  });
+
+  test("a user cannot request a traded listing", async() => {
     const { requester, requesterPassword, listing } = await createUsersAndListing();
     listing.status = "Traded";
     await listing.save();
@@ -161,12 +174,70 @@ describe("Trade requests", () => {
     const agent = await loginAgent(owner, ownerPassword);
 
     const acceptResponse = await agent.post(`/trade-requests/${acceptedRequest._id}/accept`);
+    const repeatAcceptResponse = await agent.post(`/trade-requests/${acceptedRequest._id}/accept`);
     const declineResponse = await agent.post(`/trade-requests/${declinedRequest._id}/decline`);
 
     expect(acceptResponse.statusCode).toBe(302);
+    expect(repeatAcceptResponse.statusCode).toBe(400);
     expect(declineResponse.statusCode).toBe(302);
     expect((await TradeRequest.findById(acceptedRequest._id)).status).toBe("Accepted");
     expect((await TradeRequest.findById(declinedRequest._id)).status).toBe("Declined");
+    expect((await DiceListing.findById(listing._id)).status).toBe("Pending");
+
+    const detailPage = await agent.get(`/listings/${listing._id}`);
+    const browsePage = await agent.get("/listings");
+    const requestsPage = await agent.get("/trade-requests");
+
+    expect(detailPage.text).toContain("<strong>Status:</strong> Pending");
+    expect(browsePage.text).toContain("<strong>Status:</strong> Pending");
+    expect(requestsPage.text).toContain("<strong>Listing Status:</strong> Pending");
+  });
+
+  test("a requester cannot accept their own sent request", async() => {
+    const { owner, requester, requesterPassword, listing } = await createUsersAndListing();
+    const tradeRequest = await TradeRequest.create({
+      listing: listing._id,
+      requester: requester._id,
+      owner: owner._id
+    });
+    const agent = await loginAgent(requester, requesterPassword);
+
+    const response = await agent.post(`/trade-requests/${tradeRequest._id}/accept`);
+
+    expect(response.statusCode).toBe(403);
+    expect((await TradeRequest.findById(tradeRequest._id)).status).toBe("Pending");
+    expect((await DiceListing.findById(listing._id)).status).toBe("Available");
+  });
+
+  test("competing requests remain pending after one request is accepted", async() => {
+    const { owner, ownerPassword, requester, listing } = await createUsersAndListing();
+    const { user: secondRequester } = await createTestUser({
+      username: "SecondRequester",
+      email: "second@example.com"
+    });
+    const acceptedRequest = await TradeRequest.create({
+      listing: listing._id,
+      requester: requester._id,
+      owner: owner._id
+    });
+    const competingRequest = await TradeRequest.create({
+      listing: listing._id,
+      requester: secondRequester._id,
+      owner: owner._id
+    });
+    const agent = await loginAgent(owner, ownerPassword);
+
+    await agent.post(`/trade-requests/${acceptedRequest._id}/accept`).expect(302);
+    const competingAcceptResponse = await agent.post(`/trade-requests/${competingRequest._id}/accept`);
+
+    expect(competingAcceptResponse.statusCode).toBe(400);
+    expect((await TradeRequest.findById(acceptedRequest._id)).status).toBe("Accepted");
+    expect((await TradeRequest.findById(competingRequest._id)).status).toBe("Pending");
+    expect((await DiceListing.findById(listing._id)).status).toBe("Pending");
+
+    const requestsPage = await agent.get("/trade-requests");
+    expect(requestsPage.text).not.toContain(`/trade-requests/${competingRequest._id}/accept`);
+    expect(requestsPage.text).toContain(`/trade-requests/${competingRequest._id}/decline`);
   });
 
   test("the requester can cancel their own pending request", async() => {

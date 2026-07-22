@@ -322,7 +322,13 @@ app.post("/trade-requests/:id/accept", requiredLogin, async(req, res) => {
       return res.status(404).send("Trade request not found.");
     }
 
-    if(tradeRequest.owner.toString() !== req.session.user.id) {
+    const listing = await DiceListing.findById(tradeRequest.listing);
+
+    if(!listing) {
+      return res.status(404).send("Listing not found.");
+    }
+
+    if(listing.owner.toString() !== req.session.user.id) {
       return res.status(403).send("Only the listing owner can accept this request.");
     }
 
@@ -330,8 +336,17 @@ app.post("/trade-requests/:id/accept", requiredLogin, async(req, res) => {
       return res.status(400).send("Only pending requests can be accepted.");
     }
 
+    if(listing.status !== "Available") {
+      return res.status(400).send("Only requests for available listings can be accepted.");
+    }
+
     tradeRequest.status = "Accepted";
-    await tradeRequest.save();
+    listing.status = "Pending";
+
+    await Promise.all([
+      tradeRequest.save(),
+      listing.save()
+    ]);
 
     res.redirect("/trade-requests?message=accepted");
   } catch(error) {

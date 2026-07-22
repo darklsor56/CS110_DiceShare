@@ -34,13 +34,18 @@
                         </p>
                         <p><strong>Message:</strong> <%= tradeRequest.message || "No message provided." %></p>
                         <p><strong>Status:</strong> <%= tradeRequest.status %></p>
+                        <% if(tradeRequest.listing) { %>
+                            <p><strong>Listing Status:</strong> <%= tradeRequest.listing.status %></p>
+                        <% } %>
                         <p><strong>Created:</strong> <%= tradeRequest.createdAt.toLocaleDateString() %></p>
 
                         <% if(tradeRequest.status === "Pending") { %>
                             <div class="request-actions">
-                                <form action="/trade-requests/<%= tradeRequest._id %>/accept" method="POST">
-                                    <button type="submit">Accept</button>
-                                </form>
+                                <% if(tradeRequest.listing && tradeRequest.listing.status === "Available") { %>
+                                    <form action="/trade-requests/<%= tradeRequest._id %>/accept" method="POST">
+                                        <button type="submit">Accept</button>
+                                    </form>
+                                <% } %>
                                 <form action="/trade-requests/<%= tradeRequest._id %>/decline" method="POST">
                                     <button type="submit" class="secondary-button">Decline</button>
                                 </form>
@@ -78,6 +83,9 @@
                         </p>
                         <p><strong>Message:</strong> <%= tradeRequest.message || "No message provided." %></p>
                         <p><strong>Status:</strong> <%= tradeRequest.status %></p>
+                        <% if(tradeRequest.listing) { %>
+                            <p><strong>Listing Status:</strong> <%= tradeRequest.listing.status %></p>
+                        <% } %>
                         <p><strong>Created:</strong> <%= tradeRequest.createdAt.toLocaleDateString() %></p>
 
                         <% if(tradeRequest.status === "Pending") { %>
