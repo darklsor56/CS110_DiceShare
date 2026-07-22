@@ -65,4 +65,15 @@ describe("Model validation", () => {
     const error = await request.validate().catch(validationError => validationError);
     expect(error.errors.status).toBeDefined();
   });
+
+  test("TradeRequest allows Completed status", async() => {
+    const request = new TradeRequest({
+      listing: new mongoose.Types.ObjectId(),
+      requester: new mongoose.Types.ObjectId(),
+      owner: new mongoose.Types.ObjectId(),
+      status: "Completed"
+    });
+
+    await expect(request.validate()).resolves.toBeUndefined();
+  });
 });

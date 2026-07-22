@@ -369,7 +369,8 @@ app.get("/trade-requests", requiredLogin, async(req, res) => {
     const successMessages = {
       accepted: "Trade request accepted.",
       declined: "Trade request declined.",
-      canceled: "Trade request canceled."
+      canceled: "Trade request canceled.",
+      completed: "Trade marked as completed."
     };
 
     res.render("trade-requests", {
@@ -474,6 +475,71 @@ app.post("/trade-requests/:id/cancel", requiredLogin, async(req, res) => {
   } catch(error) {
     console.error(error);
     res.status(500).send("Could not cancel trade request.");
+  }
+});
+
+app.post("/trade-requests/:id/complete", requiredLogin, async(req, res) => {
+  try {
+    const tradeRequest = await TradeRequest.findById(req.params.id);
+
+    if(!tradeRequest) {
+      return res.status(404).send("Trade request not found.");
+    }
+
+    const listing = await DiceListing.findById(tradeRequest.listing);
+
+    if(!listing) {
+      return res.status(404).send("Listing not found.");
+    }
+
+    if(listing.owner.toString() !== req.session.user.id) {
+      return res.status(403).send("Only the listing owner can complete this trade.");
+    }
+
+    if(tradeRequest.status !== "Accepted") {
+      return res.status(400).send("Only accepted trade requests can be completed.");
+    }
+
+    let offeredListing = null;
+
+    if(tradeRequest.offeredListing) {
+      offeredListing = await DiceListing.findById(tradeRequest.offeredListing);
+
+      if(!offeredListing) {
+        return res.status(404).send("Offered listing not found.");
+      }
+    }
+
+    // Atomically claim this accepted request so it cannot be completed twice.
+    const completedRequest = await TradeRequest.findOneAndUpdate(
+      { _id: tradeRequest._id, status: "Accepted" },
+      { status: "Completed" },
+      { returnDocument: "after" }
+    );
+
+    if(!completedRequest) {
+      return res.status(400).send("This trade request has already been completed or changed.");
+    }
+
+    listing.status = "Traded";
+
+    const updates = [
+      listing.save(),
+      User.findByIdAndUpdate(tradeRequest.owner, { $inc: { completedTradeCount: 1 } }),
+      User.findByIdAndUpdate(tradeRequest.requester, { $inc: { completedTradeCount: 1 } })
+    ];
+
+    if(offeredListing) {
+      offeredListing.status = "Traded";
+      updates.push(offeredListing.save());
+    }
+
+    await Promise.all(updates);
+
+    res.redirect("/trade-requests?message=completed");
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not complete trade request.");
   }
 });
 

@@ -50,6 +50,10 @@
                                     <button type="submit" class="secondary-button">Decline</button>
                                 </form>
                             </div>
+                        <% } else if(tradeRequest.status === "Accepted") { %>
+                            <form action="/trade-requests/<%= tradeRequest._id %>/complete" method="POST" class="request-actions">
+                                <button type="submit">Mark Trade Completed</button>
+                            </form>
                         <% } %>
                     </article>
                 <% }) %>

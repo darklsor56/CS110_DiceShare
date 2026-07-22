@@ -34,7 +34,7 @@ const tradeRequestSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Pending", "Accepted", "Declined", "Canceled"],
+      enum: ["Pending", "Accepted", "Declined", "Canceled", "Completed"],
       default: "Pending"
     }
   },
