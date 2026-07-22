@@ -39,7 +39,19 @@ function requiredLogin(req, res, next) {
 // Temporary routes
 app.get("/", (req, res) => {res.render("home", { title: "DiceShare" })});
 
-app.get("/listings", (req, res) => {res.render("listings", { title: "Browse Listings" })});
+app.get("/listings", async(req, res) => {
+  try {
+    const listings = (await DiceListing.find().populate("owner")).toSorted({ createdAt: -1 });
+
+    res.render("listings", {
+      title: "Browse Listings",
+      listings
+    });
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not load listings.");
+  }
+});
 app.post("/listings", requiredLogin, async(req, res) => {
   try {
     const {
