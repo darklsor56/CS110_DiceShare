@@ -28,13 +28,21 @@ const reviewSchema = new mongoose.Schema(
 
     comment: {
       type: String,
-      required: true,
       trim: true,
-      maxlength: 500
+      maxlength: 1000,
+      default: ""
     }
   },
   {
     timestamps: true
+  }
+);
+
+reviewSchema.index(
+  { reviewer: 1, listing: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { listing: { $type: "objectId" } }
   }
 );
 

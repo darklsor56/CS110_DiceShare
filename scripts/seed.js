@@ -7,6 +7,7 @@ const connectDB = require("../config/db");
 const User = require("../models/User");
 const DiceListing = require("../models/DiceListings");
 const TradeRequest = require("../models/TradeRequest");
+const Review = require("../models/Review");
 
 async function seedDatabase() {
   try {
@@ -31,6 +32,12 @@ async function seedDatabase() {
         { owner: { $in: demoUserIds } }
       ]
     });
+    await Review.deleteMany({
+      $or: [
+        { reviewer: { $in: demoUserIds } },
+        { reviewedUser: { $in: demoUserIds } }
+      ]
+    });
     await DiceListing.deleteMany({ owner: { $in: demoUserIds } });
     await User.deleteMany({ email: { $in: demoEmails } });
 
@@ -47,7 +54,7 @@ async function seedDatabase() {
         bio: "D&D player who likes sparkly resin dice and moon-themed sets.",
         profileImageUrl: "",
         completedTradeCount: 3,
-        averageRating: 4.7
+        averageRating: 0
       },
       {
         username: "GarrickTheDM",
@@ -57,7 +64,7 @@ async function seedDatabase() {
         bio: "Forever DM. I collect metal dice and oversized D20s.",
         profileImageUrl: "",
         completedTradeCount: 8,
-        averageRating: 4.9
+        averageRating: 0
       },
       {
         username: "SeleneCrits",
@@ -67,7 +74,7 @@ async function seedDatabase() {
         bio: "Pathfinder player looking for readable dice and unusual colors.",
         profileImageUrl: "",
         completedTradeCount: 1,
-        averageRating: 4.2
+        averageRating: 0
       },
       {
         username: "TestUser",
@@ -85,7 +92,7 @@ async function seedDatabase() {
 
     console.log("Creating demo listings...");
 
-    await DiceListing.insertMany([
+    const listings = await DiceListing.insertMany([
       {
         owner: mira._id,
         title: "Blue Resin 7-Piece Set",
@@ -192,6 +199,53 @@ async function seedDatabase() {
         status: "Available"
       }
     ]);
+
+    const blueResinSet = listings[0];
+    const purpleGlitterD20 = listings[1];
+    const heavyMetalSet = listings[2];
+    const greenPathfinderSet = listings[4];
+
+    console.log("Creating demo reviews...");
+
+    await Review.insertMany([
+      {
+        reviewer: garrick._id,
+        reviewedUser: mira._id,
+        listing: blueResinSet._id,
+        rating: 5,
+        comment: "Mira was friendly, on time, and the dice were exactly as described."
+      },
+      {
+        reviewer: selene._id,
+        reviewedUser: mira._id,
+        listing: purpleGlitterD20._id,
+        rating: 4,
+        comment: ""
+      },
+      {
+        reviewer: mira._id,
+        reviewedUser: garrick._id,
+        listing: heavyMetalSet._id,
+        rating: 5,
+        comment: "Great communication and an easy local trade."
+      },
+      {
+        reviewer: testUser._id,
+        reviewedUser: selene._id,
+        listing: greenPathfinderSet._id,
+        rating: 4,
+        comment: "The trade went smoothly and the set was in good condition."
+      }
+    ]);
+
+    console.log("Updating demo user ratings...");
+
+    for(const user of users) {
+      const userReviews = await Review.find({ reviewedUser: user._id });
+      const ratingTotal = userReviews.reduce((total, review) => total + review.rating, 0);
+      user.averageRating = userReviews.length > 0 ? ratingTotal / userReviews.length : 0;
+      await user.save();
+    }
 
     console.log("Seed complete!");
     console.log("Demo accounts all use password: password123");

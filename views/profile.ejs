@@ -1,7 +1,7 @@
 <%- include("partials/header") %>
 
 <section class="profile-container">
-    <h2><%= currentUser.username %>'s Profile</h2>
+    <h2><%= user.username %>'s Profile</h2>
 
     <% if (user.profileImageUrl) { %>
         <img class="profile-avatar" src="<%= user.profileImageUrl %>" alt="<%= user.username %>'s profile image">
@@ -9,22 +9,28 @@
         <div class="profile-avatar-placeholder">No Image</div>
     <% } %>
 
-    <p><strong>Email:</strong> <%= user.email %></p>
+    <% if(isOwnProfile) { %>
+        <p><strong>Email:</strong> <%= user.email %></p>
+    <% } %>
     <p><strong>Location:</strong> <%= user.location || "No location added yet." %></p>
     <p><strong>Bio:</strong> <%= user.bio || "No bio added yet." %></p>
     <p><strong>Average Rating:</strong> <%= user.averageRating %> / 5</p>
     <p><strong>Completed Trades:</strong> <%= user.completedTradeCount %></p>
 
-    <a class="button-link" href="/profile/edit">Edit Profile</a>
+    <% if(isOwnProfile) { %>
+        <a class="button-link" href="/profile/edit">Edit Profile</a>
+    <% } %>
 
     <hr>
 
     <section class="profile-listings">
-        <h3>My Active Listings</h3>
+        <h3><%= isOwnProfile ? "My Listings" : `${user.username}'s Listings` %></h3>
 
         <% if(userListings.length === 0) { %>
-            <p>You have not created any dice listings yet.</p>
-            <a class="button-link" href="/listings/new">Create Your First Listing</a>
+            <p><%= isOwnProfile ? "You have not created any dice listings yet." : "This user has not created any dice listings yet." %></p>
+            <% if(isOwnProfile) { %>
+                <a class="button-link" href="/listings/new">Create Your First Listing</a>
+            <% } %>
         <% } else { %>
             <div class="listing-grid">
                 <% userListings.forEach(listing => { %>
@@ -49,6 +55,11 @@
                 <% }) %>
             </div>
         <% } %>
+    </section>
+
+    <section class="profile-reviews">
+        <h3>Reviews</h3>
+        <%- include("partials/reviews", { reviews }) %>
     </section>
 </section>
 

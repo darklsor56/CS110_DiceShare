@@ -1,0 +1,23 @@
+<% if(reviews.length === 0) { %>
+    <p>No reviews yet.</p>
+<% } else { %>
+    <div class="review-grid">
+        <% reviews.forEach(review => { %>
+            <article class="review-card">
+                <p><strong>Rating:</strong> <%= review.rating %> / 5</p>
+
+                <% if(review.comment) { %>
+                    <p><strong>Comment:</strong> <%= review.comment %></p>
+                <% } %>
+
+                <p><strong>Reviewer:</strong> <%= review.reviewer ? review.reviewer.username : "Unknown user" %></p>
+
+                <% if(review.listing) { %>
+                    <p><strong>Related Listing:</strong> <a href="/listings/<%= review.listing._id %>"><%= review.listing.title %></a></p>
+                <% } %>
+
+                <p><strong>Reviewed:</strong> <%= review.createdAt.toLocaleDateString() %></p>
+            </article>
+        <% }) %>
+    </div>
+<% } %>

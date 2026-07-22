@@ -4,6 +4,7 @@ const DiceListing = require("./models/DiceListings")
 const bcrypt = require("bcrypt")
 const User = require("./models/User");
 const TradeRequest = require("./models/TradeRequest");
+const Review = require("./models/Review");
 const session = require("express-session");
 
 const app = express();
@@ -55,6 +56,14 @@ async function requireListingOwner(req, res, next) {
     console.error(error);
     res.status(500).send("Could not verify listing owner.");
   }
+}
+
+async function updateAverageRating(userId) {
+  const reviews = await Review.find({ reviewedUser: userId });
+  const ratingTotal = reviews.reduce((total, review) => total + review.rating, 0);
+  const averageRating = reviews.length > 0 ? ratingTotal / reviews.length : 0;
+
+  await User.findByIdAndUpdate(userId, { averageRating });
 }
 
 // Temporary routes
@@ -208,16 +217,76 @@ app.get("/listings/:id", async(req, res) => {
       }).sort({ createdAt: -1 });
     }
 
+    const reviews = await Review.find({ reviewedUser: listing.owner._id })
+      .populate("reviewer listing")
+      .sort({ createdAt: -1 });
+
     res.render("listing-detail", {
       title: listing.title,
       listing,
       recommendedListings,
       offerableListings,
-      requestCreated: req.query.request === "created"
+      reviews,
+      requestCreated: req.query.request === "created",
+      reviewCreated: req.query.review === "created"
     });
   } catch(error) {
     console.error(error);
     res.status(500).send("Could not load listing.");
+  }
+});
+
+app.post("/listings/:id/reviews", requiredLogin, async(req, res) => {
+  try {
+    const listing = await DiceListing.findById(req.params.id);
+
+    if(!listing) {
+      return res.status(404).send("Listing not found.");
+    }
+
+    if(listing.owner.toString() === req.session.user.id) {
+      return res.status(403).send("You cannot review yourself.");
+    }
+
+    const reviewBody = req.body || {};
+    const rating = Number(reviewBody.rating);
+    const comment = typeof reviewBody.comment === "string" ? reviewBody.comment.trim() : "";
+
+    if(!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).send("Rating must be a whole number from 1 to 5.");
+    }
+
+    if(comment.length > 1000) {
+      return res.status(400).send("Review comments must be 1000 characters or fewer.");
+    }
+
+    const existingReview = await Review.findOne({
+      reviewer: req.session.user.id,
+      listing: listing._id
+    });
+
+    if(existingReview) {
+      return res.status(400).send("You have already reviewed this trader for this listing.");
+    }
+
+    await Review.create({
+      reviewer: req.session.user.id,
+      reviewedUser: listing.owner,
+      listing: listing._id,
+      rating,
+      comment
+    });
+
+    await updateAverageRating(listing.owner);
+
+    res.redirect(`/listings/${listing._id}?review=created`);
+  } catch(error) {
+    if(error.code === 11000) {
+      return res.status(400).send("You have already reviewed this trader for this listing.");
+    }
+
+    console.error(error);
+    res.status(500).send("Could not create review.");
   }
 });
 
@@ -478,14 +547,48 @@ app.get("/profile", requiredLogin, async(req, res) => {
       owner: req.session.user.id
     }).sort({ createdAt: -1 });
 
+    const reviews = await Review.find({ reviewedUser: user._id })
+      .populate("reviewer listing")
+      .sort({ createdAt: -1 });
+
     res.render("profile", {
       title: "Profile",
       user,
-      userListings
+      userListings,
+      reviews,
+      isOwnProfile: true
     });
   } catch(error) {
     console.error(error);
     res.status(500).send("Could not load profile.")
+  }
+});
+
+app.get("/users/:id", async(req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if(!user) {
+      return res.status(404).send("User not found.");
+    }
+
+    const userListings = await DiceListing.find({ owner: user._id })
+      .sort({ createdAt: -1 });
+
+    const reviews = await Review.find({ reviewedUser: user._id })
+      .populate("reviewer listing")
+      .sort({ createdAt: -1 });
+
+    res.render("profile", {
+      title: `${user.username}'s Profile`,
+      user,
+      userListings,
+      reviews,
+      isOwnProfile: Boolean(req.session.user && req.session.user.id === user._id.toString())
+    });
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not load user profile.");
   }
 });
 

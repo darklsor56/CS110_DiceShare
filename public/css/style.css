@@ -286,6 +286,7 @@ footer {
 }
 
 .trade-request-form-container,
+.review-form-container,
 .request-section {
   margin-top: 2rem;
 }
@@ -296,8 +297,16 @@ footer {
   background: #fafafa;
 }
 
+.review-form {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
 .trade-request-form select,
-.trade-request-form textarea {
+.trade-request-form textarea,
+.review-form select,
+.review-form textarea {
   display: block;
   width: 100%;
 }
@@ -342,6 +351,29 @@ footer {
 .secondary-button {
   background: #eee;
   border: 1px solid #999;
+}
+
+.trader-reviews,
+.profile-reviews {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.review-card {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.review-card p {
+  margin: 0.5rem 0;
 }
 
 .delete-form {

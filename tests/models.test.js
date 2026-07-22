@@ -42,6 +42,18 @@ describe("Model validation", () => {
     expect(error.errors.rating).toBeDefined();
   });
 
+  test("Review comment is optional", async() => {
+    const review = new Review({
+      reviewer: new mongoose.Types.ObjectId(),
+      reviewedUser: new mongoose.Types.ObjectId(),
+      listing: new mongoose.Types.ObjectId(),
+      rating: 5
+    });
+
+    await expect(review.validate()).resolves.toBeUndefined();
+    expect(review.comment).toBe("");
+  });
+
   test("TradeRequest rejects invalid status", async() => {
     const request = new TradeRequest({
       listing: new mongoose.Types.ObjectId(),

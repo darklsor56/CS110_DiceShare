@@ -26,7 +26,7 @@
     <hr>
 
     <h3>Owner</h3>
-    <p><strong>Username:</strong> <%= listing.owner.username %></p>
+    <p><strong>Username:</strong> <a href="/users/<%= listing.owner._id %>"><%= listing.owner.username %></a></p>
     <p><strong>Owner Rating:</strong> <%= listing.owner.averageRating %> / 5</p>
 
     <% if (currentUser && currentUser.id === listing.owner._id.toString()) { %>
@@ -66,9 +66,44 @@
                 <button type="submit">Send Trade Request</button>
             </form>
         </section>
+
+        <section class="review-form-container">
+            <h3>Leave a Review</h3>
+
+            <% if(reviewCreated) { %>
+                <p class="success-message">Your review was submitted.</p>
+            <% } %>
+
+            <form action="/listings/<%= listing._id %>/reviews" method="POST" class="review-form">
+                <div class="form-group">
+                    <label for="rating">Rating</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">Choose a rating</option>
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Good</option>
+                        <option value="3">3 - Average</option>
+                        <option value="2">2 - Poor</option>
+                        <option value="1">1 - Very Poor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Comment (optional)</label>
+                    <textarea id="comment" name="comment" rows="4" maxlength="1000" placeholder="Share your experience with this trader"></textarea>
+                </div>
+
+                <button type="submit">Submit Review</button>
+            </form>
+        </section>
     <% } else { %>
         <p><a href="/login">Log in</a> to request a trade.</p>
+        <p><a href="/login">Log in</a> to leave a review.</p>
     <% } %>
+
+    <section class="trader-reviews">
+        <h3>Reviews for this trader</h3>
+        <%- include("partials/reviews", { reviews }) %>
+    </section>
 
     <section class="similar-listings">
         <h3>Similar Dice Listings</h3>
