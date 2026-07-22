@@ -179,6 +179,16 @@ app.post("/listings/:id/edit", requiredLogin, requireListingOwner, async(req, re
   }
 });
 
+addEventListener.post("/listings/:id/delete", requiredLogin, requireListingOwner, async(req, res) => {
+  try {
+    await DiceListing.findByIdAndDelete(req.params.id);
+    res.redirect("/profile");
+  } catch(error) {
+    console.error(error);
+    res.status(500).send("Could not delete listing.");
+  }
+});
+
 app.get("/profile", requiredLogin, async(req, res) => {
   try {
     // get the user. if no user, bring them to log in
